@@ -15,6 +15,7 @@ class App extends Component {
 
   handleKeyPress = (event) => {
     if(event.key === 'Enter'){
+      event.preventDefault();
       this.socket.emit("message", {text: this.state.new_message, id: this.state.id, name: this.state.name});
       alert("Message Sent !");
       this.setState({new_message: ""});
@@ -22,7 +23,6 @@ class App extends Component {
   }
 
   componentDidMount(){
-
     this.socket = io('http://codicoda.com:8000');
 
     this.socket.on('connect', () => {
@@ -35,16 +35,21 @@ class App extends Component {
 
     /** this will be useful way, way later **/
     this.socket.on('room', (messages) => {
-      console.log(messages)
       this.setState({old_messages:messages})
+    })
+
+    this.socket.on("room_message",(messages)=> {
+      this.setState({old_messages: this.state.old_messages.concat(messages)});
     })
 
     this.socket.on('pong!',(additionalStuff)=>{
       console.log('Phil is testing', additionalStuff)
     })  
 
+    if (this.state.id === null)
+      this.socket.emit('whoami');
+    
     this.socket.on('youare',(answer)=>{
-      console.log(answer);
       this.setState({id:answer.id})
     })
 
@@ -68,16 +73,7 @@ class App extends Component {
         </div>
         <ol className="chat">
           {this.state.old_messages.map((x, i) => 
-          x.name === this.state.name ?
-          <li key={i} className="self">
-              <div className="msg">
-                <div className="user">{x.name}</div>
-                <p>{x.text}</p>
-                <time>{x.date}</time>
-              </div>
-          </li>
-          :
-          <li key={i} className="other">
+          <li key={i} className={x.name === this.state.name ? "self" : "other"}>
               <div className="msg">
                 <div className="user">{x.name}</div>
                 <p>{x.text}</p>
@@ -86,14 +82,15 @@ class App extends Component {
           </li>
           )}
         </ol>
+
         <div className="typezone">
-          <form>
+          <form  onKeyPress={this.handleKeyPress}>
               <textarea 
                 placeholder="Hep Hep..." 
-                type="text" 
+                type="text" value={this.state.new_message}
                 name="msgbox" 
                 onChange={e => this.setState({ new_message: e.target.value })} 
-                onKeyPress={this.handleKeyPress}/>
+               />
               {/* <button onClick={()=>}>Send a message</button> */}
           </form>
         </div>

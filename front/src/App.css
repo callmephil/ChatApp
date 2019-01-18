@@ -1,0 +1,26 @@
+.section-connected-users {
+    float: right;
+    width: 15%;
+    border: 1px solid black;
+    height: 100vh;
+}
+
+.section-chat {
+    float: left;
+    width: 80%;
+    border: 1px solid black;
+    margin-left: 2%;
+    height: 100vh;
+}
+
+.div-message {
+    border: 1px solid black;
+}
+
+form {
+    border: 1px solid black;
+}
+
+textarea {
+    width: 80%;
+}

@@ -31,8 +31,6 @@ class App extends Component {
       this.setState({old_messages:messages})
     })
 
-
-
     this.socket.on('pong!',(additionalStuff)=>{
       console.log('Phil is testing', additionalStuff)
     })  
@@ -55,18 +53,25 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div>status: {this.state.isConnected ? 'connected' : 'disconnected'}</div>
-        <button onClick={()=>this.socket.emit('ping!')}>Ping</button>
-        <h4> Hello: {this.state.id} </h4>
-        <ul> {this.state.peeps ? this.state.peeps.map(x => <li key={x}> {x} </li>) : "null" }</ul>
-        
-        <div>
-          <ul> {this.state.old_messages.map((x, i) => <li key={i}> {x.name} - {x.text} </li>)}</ul>
+        {/* Main Container */}
+        <div> 
+          <section className="section-connected-users"> 
+            <div>status: {this.state.isConnected ? 'connected' : 'disconnected'}</div>
+            <button onClick={()=>this.socket.emit('ping!')}>Ping</button>
+            <h1> Peeps : {this.state.peeps.length} </h1>
+            {this.state.peeps.map((x, i) => <div key={i}> {x} </div>)}
+          </section>
+          <section className="section-chat">
+            {this.state.old_messages.slice(10, this.state.old_messages.length).map((x, i) => <div className="div-message" key={i}> <div> <h4>{x.name} <row>{x.date}</row></h4> </div> <div>{x.text}</div> </div>)}
+          
+          {/* Message Form  */}
+          <form> 
+            <textarea type="text" name="msgbox" onChange={e => this.setState({ new_message: e.target.value })} />
+            <button onClick={()=>this.socket.emit("message", {text: this.state.new_message, id: this.state.id, name: this.state.name})}>Send a message</button>
+          </form>
+          </section>
         </div>
-
-        <input type="text" name="msgbox" onChange={e => this.setState({ new_message: e.target.value })} />
-        <button onClick={()=>this.socket.emit("message", {text: this.state.new_message, id: this.state.id, name: this.state.name})}>Send a message</button>
-      </div>
+    </div>
     );
   }
 }

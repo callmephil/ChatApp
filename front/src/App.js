@@ -68,7 +68,7 @@ class App extends Component {
         </div>
         <ol className="chat">
           {this.state.old_messages.map((x, i) => 
-          x.name === "Phil" ?
+          x.name === this.state.name ?
           <li key={i} className="self">
               <div className="msg">
                 <div className="user">{x.name}</div>

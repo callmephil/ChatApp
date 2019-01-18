@@ -15,17 +15,31 @@ class App extends Component {
   }
   socket = null
 
-  handleKeyPress = (event) => {
-    if(event.key === 'Enter'){
-      event.preventDefault();
-      if (!this.state.new_message)
-        toast.error("🦄 Text is required...")
-      else
-      {
-        this.socket.emit("message", {text: this.state.new_message, id: this.state.id, name: this.state.name});
-        this.setState({new_message: ""});
-      }
+  send = () =>
+  {
+    if (!this.state.new_message.trim())
+      toast.error("🦄 Text is required...")
+    else {
+      this.socket.emit("message", {
+        text: this.state.new_message,
+        id: this.state.id,
+        name: this.state.name
+      });
+      this.setState({
+        new_message: ""
+      });
     }
+  }
+
+  handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      this.send();
+    }
+  }
+  
+  onSubmit = (event) => {
+    event.preventDefault();
+    this.send();
   }
 
   componentDidMount(){
@@ -103,13 +117,15 @@ class App extends Component {
         </ol>
 
         <div className="typezone">
-          <form onKeyPress={this.handleKeyPress}>
+          <form onKeyPress={this.handleKeyPress} onSubmit={this.onSubmit}>
               <textarea 
                 placeholder="Hep Hep..." 
-                type="text" value={this.state.new_message}
-                name="msgbox" 
+                type="text" 
+                value={this.state.new_message}
+                name="msgbox"
                 onChange={e => this.setState({ new_message: e.target.value })}
                />
+               <button type="submit" className="send"/>
           </form>
         </div>
     </div>

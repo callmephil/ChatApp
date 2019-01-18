@@ -231,7 +231,7 @@ html, body {
     margin-left: 5px;
 }
 .msg p {
-    font-size: 13px;
+    font-size: 18px;
     margin: 0 0 2px 0;
     color: #777;
     transition: all .2s ease;
@@ -416,7 +416,7 @@ textarea:focus {
         margin-bottom: 55px;
     }
     .msg p {
-        font-size: 11px;
+        font-size: 22px;
     }
     .msg .user {
         font-size: 13px;

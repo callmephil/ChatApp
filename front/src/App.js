@@ -43,8 +43,8 @@ class App extends Component {
       console.log('Phil is testing', additionalStuff)
     })  
 
-    this.socket.emit('whoami'); // Auto Update
     this.socket.on('youare',(answer)=>{
+      console.log(answer);
       this.setState({id:answer.id})
     })
 
@@ -63,8 +63,8 @@ class App extends Component {
       <div className="App">
         <div className="menu">
           <div className="name">Codi Chat </div>
-          <div className="members"><b>Status: {this.state.isConnected ? 'connected' : 'disconnected'},
-          </b> Peeps : {this.state.peeps.length}</div>
+          <div className="members">
+          <b>ID: {this.state.id}, Status: {this.state.isConnected ? `Connected` : 'Disconnected'}, </b> Peeps : {this.state.peeps.length}</div>
         </div>
         <ol className="chat">
           {this.state.old_messages.map((x, i) => 

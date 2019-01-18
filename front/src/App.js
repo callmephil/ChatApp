@@ -13,6 +13,14 @@ class App extends Component {
   }
   socket = null
 
+  handleKeyPress = (event) => {
+    if(event.key === 'Enter'){
+      this.socket.emit("message", {text: this.state.new_message, id: this.state.id, name: this.state.name});
+      alert("Message Sent !");
+      this.setState({new_message: ""});
+    }
+  }
+
   componentDidMount(){
 
     this.socket = io('http://codicoda.com:8000');
@@ -53,23 +61,41 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        {/* Main Container */}
-        <div> 
-          <section className="section-connected-users"> 
-            <div>status: {this.state.isConnected ? 'connected' : 'disconnected'}</div>
-            <button onClick={()=>this.socket.emit('ping!')}>Ping</button>
-            <h1> Peeps : {this.state.peeps.length} </h1>
-            {this.state.peeps.map((x, i) => <div key={i}> {x} </div>)}
-          </section>
-          <section className="section-chat">
-            {this.state.old_messages.slice(10, this.state.old_messages.length).map((x, i) => <div className="div-message" key={i}> <div> <h4>{x.name} <row>{x.date}</row></h4> </div> <div>{x.text}</div> </div>)}
-          
-          {/* Message Form  */}
-          <form> 
-            <textarea type="text" name="msgbox" onChange={e => this.setState({ new_message: e.target.value })} />
-            <button onClick={()=>this.socket.emit("message", {text: this.state.new_message, id: this.state.id, name: this.state.name})}>Send a message</button>
+        <div className="menu">
+          <div className="name">Codi Chat </div>
+          <div className="members"><b>Status: {this.state.isConnected ? 'connected' : 'disconnected'},
+          </b> Peeps : {this.state.peeps.length}</div>
+        </div>
+        <ol className="chat">
+          {this.state.old_messages.map((x, i) => 
+          x.name === "Phil" ?
+          <li key={i} className="self">
+              <div className="msg">
+                <div className="user">{x.name}</div>
+                <p>{x.text}</p>
+                <time>{x.date}</time>
+              </div>
+          </li>
+          :
+          <li key={i} className="other">
+              <div className="msg">
+                <div className="user">{x.name}</div>
+                <p>{x.text}</p>
+                <time>{x.date}</time>
+              </div>
+          </li>
+          )}
+        </ol>
+        <div className="typezone">
+          <form>
+              <textarea 
+                placeholder="Hep Hep..." 
+                type="text" 
+                name="msgbox" 
+                onChange={e => this.setState({ new_message: e.target.value })} 
+                onKeyPress={this.handleKeyPress}/>
+              {/* <button onClick={()=>}>Send a message</button> */}
           </form>
-          </section>
         </div>
     </div>
     );

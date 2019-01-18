@@ -54,8 +54,9 @@ html, body {
 .back:active {
     background: rgba(0,0,0,0.15);
 }
+
 .name {
-    position: absolute;
+    text-align: center;
     top: 3px;
     left: 110px;
     font-family: 'Lato';
@@ -75,7 +76,7 @@ html, body {
     cursor: default;
 }
 .members {
-    position: absolute;
+    text-align: center;
     top: 30px;
     left: 115px;
     font-family: 'Lato';
@@ -160,7 +161,7 @@ html, body {
 
 .other .msg {
     border-top-left-radius: 0px;
-    box-shadow: -1px 2px 0px #c1cbcd;
+    box-shadow: -1px 2px 0px #e2480b;
 }
 .other:before {
     content: "";
@@ -181,13 +182,13 @@ html, body {
 }
 .self .msg {
     border-bottom-right-radius: 0px;
-    box-shadow: 1px 2px 0px #c1cbcd;
+    box-shadow: 1px 2px 0px #7cf171;
 }
 .self:after {
     content: "";
     position: relative;
     display: inline-block;
-    float: right;
+    /* float: right; */
     bottom: 0px;
     right: 0px;
     width: 0px;
@@ -475,5 +476,16 @@ textarea:focus {
     }
     .chat .notification time {
         right: 10px;
+    }
+
+    .menu {
+        display: inherit;
+        height: 60px;
+    }
+
+    .name,
+    .members {
+        position: initial;
+        text-align: left;
     }
 }

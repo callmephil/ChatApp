@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css'
+import Emoji from 'react-emoji-render';
 
 class App extends Component {
   state = {
@@ -109,7 +110,7 @@ class App extends Component {
           <li key={i} className={x.name === this.state.name ? "self" : "other"}>
               <div className="msg">
                 <div className="user">{x.name === this.state.name ? x.name : `${x.name} - ${x.id}`}</div>
-                <p>{x.text}</p>
+                <p><Emoji text={x.text}></Emoji></p>
                 <time>{x.date}</time>
               </div>
           </li>
@@ -126,6 +127,7 @@ class App extends Component {
                 onChange={e => this.setState({ new_message: e.target.value })}
                />
                <button type="submit" className="send"/>
+               <div class="emojis"></div>
           </form>
         </div>
     </div>

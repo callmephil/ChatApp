@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
+import './App.css'
 
 class App extends Component {
   state = {
@@ -7,7 +8,8 @@ class App extends Component {
     id:null,
     peeps: [],
     old_messages: [],
-    answer: "" 
+    name: "Phil",
+    new_message: "" 
   }
   socket = null
 
@@ -29,10 +31,13 @@ class App extends Component {
       this.setState({old_messages:messages})
     })
 
+
+
     this.socket.on('pong!',(additionalStuff)=>{
       console.log('Phil is testing', additionalStuff)
     })  
 
+    this.socket.emit('whoami'); // Auto Update
     this.socket.on('youare',(answer)=>{
       this.setState({id:answer.id})
     })
@@ -40,16 +45,6 @@ class App extends Component {
     this.socket.on('peeps',(answer)=>{
       this.setState({peeps:answer})
     })
-
-    this.socket.on('next',(message_from_server) =>
-      console.log(message_from_server)
-    )
-
-    this.socket.on('addition',(message_from_server) =>
-      console.log(message_from_server)
-    )
-
-    this.socket.emit('addition');
   }
 
   componentWillUnmount(){
@@ -58,28 +53,19 @@ class App extends Component {
   }
 
   render() {
-    const test = {text: "Phil is searching the answer", id: this.state.id, name: "Phil"};
-    // const {date, id, name, text} = this.state.old_messages;
     return (
       <div className="App">
         <div>status: {this.state.isConnected ? 'connected' : 'disconnected'}</div>
         <button onClick={()=>this.socket.emit('ping!')}>Ping</button>
-        <button onClick={()=>this.socket.emit('whoami')}>Who am I?</button>
-        <button onClick={()=>this.socket.emit('give me next')}>Give me next</button>
         <h4> Hello: {this.state.id} </h4>
         <ul> {this.state.peeps ? this.state.peeps.map(x => <li key={x}> {x} </li>) : "null" }</ul>
         
-        <button onClick={()=>this.socket.emit("message", test)}>Send a message</button>
         <div>
-          {console.log("Test", this.state.old_message ? this.state.old_messages : "null")}
-          {/* {this.state.old_messages.map(msg => {
-            <div key={msg.id}> {msg.text} </div>
-          })} */}
+          <ul> {this.state.old_messages.map((x, i) => <li key={i}> {x.name} - {x.text} </li>)}</ul>
         </div>
 
-        <input type="text" name="answer" onChange={e => this.setState({ answer: e.target.value })} />
-        <button onClick={()=>this.socket.emit('answer',this.state.answer)}>submit answer</button>
-
+        <input type="text" name="msgbox" onChange={e => this.setState({ new_message: e.target.value })} />
+        <button onClick={()=>this.socket.emit("message", {text: this.state.new_message, id: this.state.id, name: this.state.name})}>Send a message</button>
       </div>
     );
   }

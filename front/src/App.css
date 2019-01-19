@@ -232,7 +232,7 @@ html, body {
 }
 .msg p {
     font-size: 18px;
-    margin: 0 0 2px 0;
+    margin: 0 0 2px 15px;
     color: #777;
     transition: all .2s ease;
 }

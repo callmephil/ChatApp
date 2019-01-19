@@ -8,15 +8,17 @@ import Emoji from 'react-emoji-render';
 class App extends Component {
   state = {
     isConnected:false,
+    lastchatid:null,
     id:null,
     peeps: [],
+    test: [],
     old_messages: [],
     name: "Phil",
-    new_message: "" 
+    new_message: ""
   }
   socket = null
 
-  send = () =>
+  sendMsg = () =>
   {
     if (!this.state.new_message.trim())
       toast.error("🦄 Text is required...")
@@ -32,15 +34,55 @@ class App extends Component {
     }
   }
 
+  groupMessage = (msgList) =>
+  {
+    // if (!msgList)
+    //   return toast.error("Unable to load old messages");
+
+    var owner = "";
+    var msgarray = [];
+    var structure = [];
+    var j = 0;
+    // Loop on all messages
+    msgList.map((data, i) => {
+      // if it's not the first message and the owner is the same as last one get in this
+      // !We Start by the else 
+      if (i !== 0 && data.name === msgList[i - 1].name) {
+      {
+        // Once we have our structure build an array with all the old/new messages. since it's a loop we can identify the owner just before filling that structure.
+        structure[owner].text.splice(i, 0, data.text);
+        // @Todo Find index of last msg for owner and get his date
+        // This works but unefficient
+        if (structure[owner].date !== data.date) {
+          structure[owner].date = data.date;
+        }
+      }
+      // Fill a new structure based on the amount of conversation 
+      } else {
+        owner = j; // !Without that we can't fill the message at the right place
+        structure.push({
+          id: data.id,
+          name: data.name,
+          text: [data.text].concat(msgarray),
+          date: data.date
+        });
+        j++; // !Update the owner when the job is done.
+      }
+    })
+
+    return structure;
+  }
+
   handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      this.send();
+      event.preventDefault();
+      this.sendMsg();
     }
   }
   
   onSubmit = (event) => {
     event.preventDefault();
-    this.send();
+    this.sendMsg();
   }
 
   componentDidMount(){
@@ -56,7 +98,7 @@ class App extends Component {
 
     /** this will be useful way, way later **/
     this.socket.on('room', (messages) => {
-      this.setState({old_messages:messages})
+      this.setState({newmsg: false, old_messages: messages})
     })
 
     this.socket.on("room_message",(messages)=> {
@@ -80,12 +122,17 @@ class App extends Component {
     })
   }
 
+  componentDidUpdate(){
+  }
+
   componentWillUnmount(){
     this.socket.close()
     this.socket = null
   }
 
   render() {
+    // ! Modify the old list so we can print all message at once
+    const msgList = this.groupMessage(this.state.old_messages);
     return (
       <div className="App">
         <ToastContainer 
@@ -106,12 +153,18 @@ class App extends Component {
           <b>ID: {this.state.id}, Status: {this.state.isConnected ? `Connected` : 'Disconnected'}, </b> Peeps : {this.state.peeps.length}</div>
         </div>
         <ol className="chat">
-          {this.state.old_messages.map((x, i) => 
+          {msgList.map((x, i) =>
           <li key={i} className={x.name === this.state.name ? "self" : "other"}>
               <div className="msg">
-                <div className="user">{x.name === this.state.name ? x.name : `${x.name} - ${x.id}`}</div>
-                <p><Emoji text={x.text}></Emoji></p>
+                <div className="user"> <h2>{x.name === this.state.name ? x.name : `${x.name} - ${x.id}`} </h2>
+                {x.text.map((x, i) => 
+                <p key={i}>
+                  <Emoji text={x}></Emoji>
+                </p>
+                )
+                }
                 <time>{x.date}</time>
+                </div>
               </div>
           </li>
           )}
@@ -127,8 +180,8 @@ class App extends Component {
                 onChange={e => this.setState({ new_message: e.target.value })}
                />
                <button type="submit" className="send"/>
-               <div class="emojis"></div>
           </form>
+          <div className="emojis"></div>
         </div>
     </div>
     );

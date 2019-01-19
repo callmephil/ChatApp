@@ -8,13 +8,10 @@ import Emoji from 'react-emoji-render';
 class App extends Component {
   state = {
     isConnected:false,
-    lastchatid:null,
     id:null,
     peeps: [],
-    test: [],
     old_messages: [],
     name: "Phil",
-    new_message: ""
   }
   socket = null
 
@@ -98,7 +95,7 @@ class App extends Component {
 
     /** this will be useful way, way later **/
     this.socket.on('room', (messages) => {
-      this.setState({newmsg: false, old_messages: messages})
+      this.setState({old_messages: messages})
     })
 
     this.socket.on("room_message",(messages)=> {
